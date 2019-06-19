@@ -1,0 +1,41 @@
+{% load static %}
+
+<!-- Card for details -->
+<tr>
+    <th scope="row">
+        <img style="border-radius: 50%; max-width: 50px; max-height: 50px;"
+             src="{% if contact.image %}
+        {{ contact.image.url }}
+        {% else %}
+        {% static 'images/boy.png' %}
+        {% endif %}"
+             class="img-fluid"/>
+    </th>
+    <th>
+        {{ SMS.owner.username }}
+    </th>
+    <th>
+        {% if SMS.toxic_comment %}
+        <p style="white-space: normal;max-height:50px;overflow: auto;display: block; color:red">This message is blocked </p>
+        {% else %}
+        <p style="white-space: normal;max-height:75px;overflow: auto;display: block;">{{ SMS.content }}</p>
+        {% endif %}
+    </th>
+    <th>
+        {{ SMS.date|date:"M d" }} {{ SMS.date|time:"H:i" }}
+    </th>
+    <th>
+        {% if SMS.owner == request.user %}
+            <form action="{% url 'detail' SMS.id %}">
+                <button type="submit" class="btn btn-primary">More Detail</button>
+            </form>
+        {% else %}
+            <form action="{% url 'detail' SMS.id %}">
+                <button type="submit" class="btn btn-secondary" disabled>No permission</button>
+            </form>
+        {% endif %}
+    </th>
+
+</tr>
+<!-- Card for details ends -->
+

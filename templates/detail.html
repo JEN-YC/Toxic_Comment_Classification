@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+
+    {% if SMS.owner == request.user %}
+        {{ SMS.owner.username }}
+    {% else %}
+        You don't have access to this page!
+    {% endif %}
+{% endblock title %}
+{% block content %}
+    {% if SMS.owner == request.user %}
+        <!-- Main Section -->
+        <div class="container">
+            <h2 class="heading">Comment ID：{{ SMS.id }}</h2>
+            <hr/>
+        </div>
+        <div class="container custom-contaniner-width">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Comment</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% include 'partials/_card.html' %}
+                </tbody>
+            </table>
+        </div>
+        <br><br><br>
+        <div class="container custom-contaniner-width">
+            <table class="table table dark">
+                <thead>
+                <tr>
+                    <th scope="col">Model</th>
+                    <th scope="col">Toxic</th>
+                    <th scope="col">Severe</th>
+                    <th scope="col">Obscene</th>
+                    <th scope="col">Threat</th>
+                    <th scope="col">insult</th>
+                    <th scope="col">hate</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope><p style="color: crimson;">XGBoost</p></th>
+                    <th scope>{{ SMS.toxic_ratio }}</th>
+                    <th scope>{{ SMS.severe_ratio }}</th>
+                    <th scope>{{ SMS.obscene_ratio }}</th>
+                    <th scope>{{ SMS.threat_ratio }}</th>
+                    <th scope>{{ SMS.insult_ratio }}</th>
+                    <th scope>{{ SMS.hate_ratio }}</th>
+                </tr>
+                <tr>
+                    <th scope><p style="color: darkblue">LSTM</p></th>
+                    <th scope>{{ SMS.L_toxic_ratio }}</th>
+                    <th scope>{{ SMS.L_severe_ratio }}</th>
+                    <th scope>{{ SMS.L_obscene_ratio }}</th>
+                    <th scope>{{ SMS.L_threat_ratio }}</th>
+                    <th scope>{{ SMS.L_insult_ratio }}</th>
+                    <th scope>{{ SMS.L_hate_ratio }}</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th scope>
+                        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#toxic_word">
+                            Bad Words
+                        </button>
+                    </th>
+                    <th scope>
+                        <button type="button" class="btn btn-secondary" data-toggle="collapse"
+                                data-target="#severe_word">Bad Words
+                        </button>
+                    </th>
+                    <th scope>
+                        <button type="button" class="btn btn-success" data-toggle="collapse"
+                                data-target="#obscene_word">Bad Words
+                        </button>
+                    </th>
+                    <th scope>
+                        <button type="button" class="btn btn-danger" data-toggle="collapse" data-target="#threat_word">
+                            Bad Words
+                        </button>
+                    </th>
+                    <th scope>
+                        <button type="button" class="btn btn-warning" data-toggle="collapse" data-target="#insult_word">
+                            Bad Words
+                        </button>
+                    </th>
+                    <th scope>
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#hate_word">Bad
+                            Words
+                        </button>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th scope>
+                        <div id="toxic_word" class="collapse">{{ SMS.toxic_words|linebreaks }}</div>
+                    </th>
+                    <th scope>
+                        <div id="severe_word" class="collapse">{{ SMS.severe_words|linebreaks }}</div>
+                    </th>
+                    <th scope>
+                        <div id="obscene_word" class="collapse">{{ SMS.obscene_words|linebreaks }}</div>
+                    </th>
+                    <th scope>
+                        <div id="threat_word" class="collapse">{{ SMS.threat_words|linebreaks }}</div>
+                    </th>
+                    <th scope>
+                        <div id="insult_word" class="collapse">{{ SMS.insult_words|linebreaks }}</div>
+                    </th>
+                    <th scope>
+                        <div id="hate_word" class="collapse">{{ SMS.hate_words|linebreaks }}</div>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container mt-3">
+            <h5 class="text-center my-3 font-weight-light">Date Added: &nbsp; {{ SMS.date }}</h5>
+            <p class="text-center text-light">
+                <a class="btn btn-info px-5" href="{% url 'update' SMS.id %}">
+                    <i class="far fa-edit"></i> &nbsp; Update
+                </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-danger px-5" href="{% url 'delete' SMS.id %}">
+                    <i class="fas fa-trash-alt"></i> &nbsp; Delete
+                </a>
+            </p>
+        </div>
+        <!-- Main Section ends-->
+    {% else %}
+        <div class="container">
+            <h2 class="heading font-weight-light text-center">You don't have access to this page!</h2>
+        </div>
+    {% endif %}
+{% endblock content %}

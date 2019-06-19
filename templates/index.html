@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Home Page
+{% endblock title %}
+
+{% block content %}
+    <!-- Main Section -->
+    <div class="container">
+        <h3 class="heading font-weight-light">Welcome</h3>
+        <hr/>
+    </div>
+    <div class="container custom-contaniner-width">
+        <div class="row">
+            <div class="col">
+                <form id="comment_form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="Comment_Textarea">Your Comment：</label>
+                        <textarea class="form-control" id="Comment_Textarea" name="comment" rows="3"
+                                  style="min-width: 70%"></textarea>
+                    </div>
+                    <button id="submit_button" type="button" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="{% static './css/jquery-ui.min.css' %}">
+    <script type="text/javascript" src="{% static './css/jquery-ui.min.js' %}"></script>
+
+    <div id="dialog" title="Analysis message..." hidden="hidden"><p>Please wait a second!</p></div>
+
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(document).ready(function () {
+            var token = '{{csrf_token}}';
+            var comment_content;
+            let tableRef;
+
+            $("#submit_button").click(function () {
+                if ($("#Comment_Textarea").val != '') {
+                    var opt = {
+                        autoOpen: false,
+                        position: {my: "center", at:"left+800px", of:window},
+                        <!--buttons:{-->
+                            <!--"OK": function () {-->
+                                <!--$(this).dialog("close");-->
+                            <!--},-->
+                            <!--"Cancel": function () {-->
+                                <!--$(this).dialog("close");-->
+                            <!--}-->
+                        <!--}-->
+                    }
+                    var dia = $j("#dialog").dialog(opt).dialog('open');
+                    setTimeout(function () {
+                        dia.dialog('close');
+                    }, 5000);
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'submit' %}",
+                        dataType: "json",
+                        data: {
+                            "comment": $("#Comment_Textarea").val(),
+                            "csrfmiddlewaretoken": token
+                        },
+                        success: function (data) {
+                            location.reload();
+                            <!--data.id = Number(data.id)-->
+                            <!--comment_content = $("#Comment_Textarea").val();-->
+                            <!--$("#Comment_Textarea").val('');-->
+                            <!--tableRef = document.getElementById("comment_table");-->
+                            <!--var row = tableRef.insertRow(1);-->
+                            <!--var cell1 = row.insertCell(0);-->
+                            <!--var cell2 = row.insertCell(1);-->
+                            <!--var cell3 = row.insertCell(2);-->
+                            <!--var cell4 = row.insertCell(3);-->
+                            <!--var cell5 = row.insertCell(4)-->
+                            <!--var goto = "{% url 'detail' 0%}";-->
+                            <!--goto = goto.replace("0", data.id);-->
+                            <!--msg_time = data.time-->
+                            <!--cell1.innerHTML = "<img style='border-radius: 50%; max-width: 50px; max-height: 50px;'src='{% static 'images/boy.png' %}' class='img-fluid'/>";-->
+                            <!--cell2.innerHTML = data.user_name;-->
+                            <!--cell3.innerHTML = "<p style='white-space: normal;max-height:75px;overflow: auto;display: block;'>" + comment_content + "</p>";-->
+                            <!--cell4.innerHTML = msg_time-->
+                            <!--cell5.innerHTML = "<form action='" + goto + "'> <button type='submit' class='btn btn-primary'>More Detail</button> </form>";-->
+                        },
+                        error: function (jqXGR) {
+                            $("#Comment_Textarea").val('');
+                        }
+
+                    });
+                }
+            });
+        });
+    </script>
+
+    <br><br><br>
+    <div class="container custom-contaniner-width">
+        <table id="comment_table" class="table">
+            {% if SMSs %}
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for SMS in SMSs %}
+                    {% include 'partials/_card2.html' %}
+                {% endfor %}
+                </tbody>
+
+            {% else %}
+                <p class="d-block font-weight-light my-2 heading">You have not save any contacts yet!</p>
+            {% endif %}
+        </table>
+    </div>
+
+
+    <!-- Main Section ends-->
+{% endblock content %}
